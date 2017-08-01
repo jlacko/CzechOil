@@ -57,7 +57,7 @@ obce <- append_data(obce, frmBenzinKey, key.shp = "key", key.data = "key")
 nadpis <- "Cena Naturalu 95"  # nadpis legendy
 endCredits <- paste("zdroj dat: Ráádio Impuls (http://benzin.impuls.cz/) k ", format(max(frmBenzin$datum), "%d.%m.%Y") ,sep = "")
 
-wrkObce <- obce[obce$Obyvatel > 500000, ] # Praha, Brno
+wrkObce <- obce[obce$Obyvatel > 400000, ] # Praha, Brno
 
 plot <-   tm_shape(obce, bbox = bbox)+tm_fill(col = "cena", pal = "YlOrRd", title = nadpis, showNA = F, colorNA = NULL)+
   tm_shape(republika, bbox = bbox)+tm_borders("grey30", lwd = 1) +
