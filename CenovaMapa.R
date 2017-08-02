@@ -3,7 +3,7 @@ library(rvest)
 library(tmap)
 library(tmaptools)
 library(raster)
-library(RCzechia)
+library(RCzechia) # set shapefilů pro Českou republiku - devtools::install_github("jlacko/RCzechia")
 library(stringr)
 library(dplyr)
 library(RColorBrewer)
@@ -38,7 +38,7 @@ frmBenzin$okres <- gsub("Hlavní město\\s","",frmBenzin$okres)
 frmBenzin$obec <- str_split(frmBenzin$obec, ",", simplify = T)[,1]
 frmBenzin$key <- paste(frmBenzin$obec, frmBenzin$okres, sep = "/")
 
-# suma za obci místo detailu; od váženého průměru (kde vahou je objem prodeje) abstrahuji
+# průměr za obci místo detailu ----
 
 frmBenzinKey <- frmBenzin %>%
   dplyr::select(key, cena, smes) %>% # raster mi maskuje select (hajzl!)
@@ -50,19 +50,20 @@ frmBenzinKey <- frmBenzin %>%
 
 obce$key <- paste(obce$Obec, obce$Okres, sep = "/")
 
-obce <- append_data(obce, frmBenzinKey, key.shp = "key", key.data = "key")
+obce <- append_data(obce, frmBenzinKey, key.shp = "key", key.data = "key") # 6 z 552 pump nespárovaných jde přijmout
 
 # vlastí kreslení... ----
 
-nadpis <- "Cena Naturalu 95"  # nadpis legendy
-endCredits <- paste("zdroj dat: Ráádio Impuls (http://benzin.impuls.cz/) k ", format(max(frmBenzin$datum), "%d.%m.%Y") ,sep = "")
+nadpis <- "Cena benzínu po obcích v České republice" # nadpis grafu
+leyenda <- "Cena Naturalu 95"  # nadpis legendy
+endCredits <- paste("zdroj dat: Ráádio Impuls (http://benzin.impuls.cz/), staženo k", format(max(frmBenzin$datum), "%d.%m.%Y") ,sep = " ")
 
 wrkObce <- obce[obce$Obyvatel > 300000, ] # Praha, Brno
 
-plot <-   tm_shape(obce, bbox = bbox)+tm_fill(col = "cena", pal = "YlOrRd", title = nadpis, showNA = F, colorNA = NULL)+
+plot <-   tm_shape(obce, bbox = bbox)+tm_fill(col = "cena", pal = "YlOrRd", title = leyenda, showNA = F, colorNA = NULL)+
   tm_shape(republika, bbox = bbox)+tm_borders("grey30", lwd = 1) +
   tm_shape(wrkObce)+tm_borders("grey20", lwd = 0.5)+
-  tm_style_white("Cena benzínu v České republice",frame = F, fontfamily = "Calibri", legend.text.size = 0.5, legend.title.size = 0.7, legend.format = list(text.separator = "-", fun=function(x) paste0(formatC(x, digits=0, format="f"), " Kč")))+
+  tm_style_white(nadpis, frame = F, fontfamily = "Calibri", legend.text.size = 0.5, legend.title.size = 0.7, legend.format = list(text.separator = "-", fun=function(x) paste0(formatC(x, digits=2, format="f"), " Kč")))+
   tm_credits(endCredits, position = c("RIGHT", "BOTTOM"), size = 0.4, col = "grey35")
 
 save_tmap(plot , filename = "benzin.png", width = 1600, type = "cairo")
