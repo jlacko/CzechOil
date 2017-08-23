@@ -15,7 +15,6 @@ bbox <- extent(republika) # trochu víc místa nahoře a dole, aby se vešel nad
 bbox@ymax <- bbox@ymax + 0.35
 bbox@ymin <- bbox@ymin - 0.15
 
-
 # Škrábej ty prkna ať jsou bílý... ----
 
 for (i in 1:56) { # for cyklus k načtení všech stran
