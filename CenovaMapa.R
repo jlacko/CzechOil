@@ -18,7 +18,7 @@ bbox@ymin <- bbox@ymin - 0.15
 
 # Škrábej ty prkna ať jsou bílý... ----
 
-for (i in 1:48) { # for cyklus k načtení 48 stran
+for (i in 1:56) { # for cyklus k načtení všech stran
 
     impuls <- read_html(paste(url, i, sep = ''), encoding = "windows-1250")
     asdf <- impuls %>%
