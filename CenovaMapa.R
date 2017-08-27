@@ -30,7 +30,7 @@ for (i in 1:56) { # for cyklus k načtení všech stran
 
 frmBenzin$X1 <- NULL
 colnames(frmBenzin) <- c("nazev", "obec", "okres","smes", "datum", "cena")
-frmBenzin$cena <- gsub("\sKč","",frmBenzin$cena)
+frmBenzin$cena <- gsub("(*UCP)\\s*Kč", "", frmBenzin$cena, perl = T)
 frmBenzin$cena <- as.double(frmBenzin$cena)
 frmBenzin$datum <- as.Date(frmBenzin$datum, "%d. %m. %Y")
 frmBenzin$okres <- gsub("Hlavní město\\s","",frmBenzin$okres)
