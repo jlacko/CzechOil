@@ -1,5 +1,13 @@
-asdf <- frmBenzin$cena[1]
-asdf <- "28.90 Kč"
+library(rvest)
+library(stringr)
 
 
-asdf <- gsub("\\sKč","",asdf)
+impuls <- read_html(paste(url, i, sep = ''), encoding = "windows-1250")
+asdf <- impuls %>%
+  html_table()
+
+Benzin <- asdf[[1]]$X7
+chrBenzin <- gsub("\\sKč","",Benzin)
+numBenzin <- as.double(chrBenzin)
+
+numBenzin
