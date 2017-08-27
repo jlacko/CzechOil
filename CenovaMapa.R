@@ -30,7 +30,7 @@ for (i in 1:56) { # for cyklus k načtení všech stran
 
 frmBenzin$X1 <- NULL
 colnames(frmBenzin) <- c("nazev", "obec", "okres","smes", "datum", "cena")
-frmBenzin$cena <- gsub("\\sKč","",frmBenzin$cena)
+frmBenzin$cena <- gsub("\sKč","",frmBenzin$cena)
 frmBenzin$cena <- as.double(frmBenzin$cena)
 frmBenzin$datum <- as.Date(frmBenzin$datum, "%d. %m. %Y")
 frmBenzin$okres <- gsub("Hlavní město\\s","",frmBenzin$okres)
@@ -49,7 +49,7 @@ frmBenzinKey <- frmBenzin %>%
 
 obce$key <- paste(obce$Obec, obce$Okres, sep = "/")
 
-obce <- append_data(obce, frmBenzinKey, key.shp = "key", key.data = "key") # 6 z 552 pump nespárovaných jde přijmout
+obce <- append_data(obce, frmBenzinKey, key.shp = "key", key.data = "key") # 6 z 664 pump nespárovaných jde přijmout
 
 # vlastí kreslení... ----
 
@@ -66,4 +66,5 @@ plot <-   tm_shape(obce, bbox = bbox)+tm_fill(col = "cena", pal = "YlOrRd", titl
   tm_credits(endCredits, position = c("RIGHT", "BOTTOM"), size = 0.4, col = "grey35")
 
 save_tmap(plot , filename = "benzin.png", width = 1600, type = "cairo")
+
 
