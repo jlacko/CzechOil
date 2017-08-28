@@ -50,7 +50,6 @@ frmBenzinKey <- frmBenzin %>%
 obce_body$key <- paste(obce_body$Obec, obce_body$Okres, sep = "/")
 
 obce_body <- append_data(obce_body, frmBenzinKey, key.shp = "key", key.data = "key", ignore.na = T) # ignoruju NA = zahazuju nespárované obce (neznámá cena beňa)
-
 obce_body <- subset(obce_body, !is.na(obce_body$cena)) # zahazuju obce s neznámou cenou benzínu
 
 # vlastí kreslení... ----
