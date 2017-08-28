@@ -47,9 +47,11 @@ frmBenzinKey <- frmBenzin %>%
 
 # příprava shapefilu
 
-obce$key <- paste(obce$Obec, obce$Okres, sep = "/")
+obce_body$key <- paste(obce_body$Obec, obce_body$Okres, sep = "/")
 
-obce <- append_data(obce, frmBenzinKey, key.shp = "key", key.data = "key") # 6 z 664 pump nespárovaných jde přijmout
+obce_body <- append_data(obce_body, frmBenzinKey, key.shp = "key", key.data = "key", ignore.na = T) # ignoruju NA = zahazuju nespárované obce (neznámá cena beňa)
+
+obce_body <- subset(obce_body, !is.na(obce_body$cena)) # zahazuju obce s neznámou cenou benzínu
 
 # vlastí kreslení... ----
 
@@ -57,11 +59,11 @@ nadpis <- "Cena benzínu po obcích v České republice" # nadpis grafu
 leyenda <- "Cena Naturalu 95"  # nadpis legendy
 endCredits <- paste("zdroj dat: Ráádio Impuls (http://benzin.impuls.cz/), staženo k", format(max(frmBenzin$datum), "%d.%m.%Y") ,sep = " ")
 
-wrkObce <- obce[obce$Obyvatel > 300000, ] # Praha, Brno
+wrkObce <- obce_polygony[obce_polygony$Obyvatel > 300000, ] # Praha, Brno
 
-plot <-   tm_shape(obce, bbox = bbox)+tm_fill(col = "cena", pal = "YlOrRd", title = leyenda, showNA = F, colorNA = NULL)+
-  tm_shape(republika, bbox = bbox)+tm_borders("grey30", lwd = 1) +
-  tm_shape(wrkObce)+tm_borders("grey20", lwd = 0.5)+
+plot <-   tm_shape(obce_body, bbox = bbox) + tm_bubbles(size = 1/20, col = "cena", border.alpha = 0, showNA = F, pal = "YlOrRd", title.size = leyenda) +
+  tm_shape(republika, bbox = bbox) + tm_borders("grey30", lwd = 1) +
+  tm_shape(wrkObce) + tm_borders("grey20", lwd = 0.5)+
   tm_style_white(nadpis, frame = F, fontfamily = "Calibri", legend.text.size = 0.5, legend.title.size = 0.7, legend.format = list(text.separator = "-", fun=function(x) paste0(formatC(x, digits=2, format="f"), " Kč")))+
   tm_credits(endCredits, position = c("RIGHT", "BOTTOM"), size = 0.4, col = "grey35")
 
