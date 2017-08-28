@@ -7,6 +7,7 @@ library(RCzechia) # set shapefilů pro Českou republiku - devtools::install_git
 library(stringr)
 library(dplyr)
 library(RColorBrewer)
+#library(extrafont)
 
 url <- "http://benzin.impuls.cz/benzin.aspx?strana=" # bez čísla stránky
 frmBenzin <- data.frame() # prázdný data frame
@@ -63,7 +64,7 @@ wrkObce <- obce_polygony[obce_polygony$Obyvatel > 300000, ] # Praha, Brno
 plot <-   tm_shape(obce_body, bbox = bbox) + tm_bubbles(size = 1/20, col = "cena", border.alpha = 0, showNA = F, pal = "YlOrRd", title.col = leyenda) +
   tm_shape(republika, bbox = bbox) + tm_borders("grey30", lwd = 1) +
   tm_shape(wrkObce) + tm_borders("grey20", lwd = 0.5)+
-  tm_style_white(nadpis, frame = F, fontfamily = "Calibri", legend.text.size = 0.5, legend.title.size = 0.7, legend.format = list(text.separator = "-", fun=function(x) paste0(formatC(x, digits=2, format="f"), " Kč")))+
+  tm_style_white(nadpis, frame = F, fontfamily = "Roboto", legend.text.size = 0.5, legend.title.size = 0.7, legend.format = list(text.separator = "-", fun=function(x) paste0(formatC(x, digits=2, format="f"), " Kč")))+
   tm_credits(endCredits, position = c("RIGHT", "BOTTOM"), size = 0.4, col = "grey35")
 
 save_tmap(plot , filename = "benzin.png", width = 1600, type = "cairo")
