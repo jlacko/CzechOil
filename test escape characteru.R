@@ -9,7 +9,7 @@ asdf <- impuls %>%
 
 Benzin <- asdf[[1]]$X7
 
-chrBenzin <- gsub("(*UCP)\\s*Kč","",Benzin, perl=TRUE)
+chrBenzin <- gsub("(*UCP)\\s*Kč","",Benzin, perl=T)
 numBenzin <- as.double(chrBenzin)
 
 numBenzin
