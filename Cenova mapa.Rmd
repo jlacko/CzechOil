@@ -1,0 +1,21 @@
+---
+title: "Cenová mapa benzínu v ČR"
+version: "7a před MŽB"
+date:    "4.4.1976"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    template: ~/RPTG/Report.tex
+---
+
+```{r setup, include=FALSE}
+source('~/CzechOil/CenovaMapa.R')
+
+```
+
+Toto je cenová mapa benzínu v Česk republice. Benzín je drahý, ale co dnes na světe není...
+
+```{r echo=FALSE}
+print(tmBenzin)
+```
+
