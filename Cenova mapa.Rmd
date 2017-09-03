@@ -13,7 +13,7 @@ source('~/CzechOil/CenovaMapa.R')
 
 ```
 
-Toto je cenová mapa benzínu v Česk republice. Benzín je drahý, ale co dnes na světe není...
+Toto je cenová mapa benzínu v České republice. Benzín je drahý, ale co dnes na světe není...
 
 ```{r echo=FALSE}
 print(tmBenzin)

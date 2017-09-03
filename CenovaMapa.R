@@ -53,7 +53,7 @@ obce_body$key <- paste(obce_body$Obec, obce_body$Okres, sep = "/")
 vObce <- c("Praha", "Brno", "Plzeň", "Ostrava") # velké obce - nejsou puntíkem, ale obrysem
 
 obce_body <- obce_body %>%
-  append_data(frmBenzinKey, key.shp = "key", key.data = "key", ignore.na = T) %>% # ignoruju NA = zahazuju nespárované obce (neznámá cena beňa)
+  append_data(frmBenzinKey, key.shp = "key", key.data = "key") %>% # klíč = obec / okres
   subset(!is.na(obce_body$cena)) %>%  # zahazuju obce s neznámou cenou benzínu
   subset(!obce_body$Obec %in% vObce) # ať se netluče puntík s polygonem
 
