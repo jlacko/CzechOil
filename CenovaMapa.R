@@ -9,44 +9,29 @@ library(dplyr)
 library(RColorBrewer)
 #library(extrafont)
 
-url <- "http://benzin.impuls.cz/benzin.aspx?strana=" # bez čísla stránky
-frmBenzin <- data.frame() # prázdný data frame
+# Připojení databáze ----
+
+myDb <- dbConnect(dbDriver('PostgreSQL'),
+                  host = "jla-postgres.c7ymi3y4c6gx.eu-central-1.rds.amazonaws.com",
+                  port = 5432,
+                  user = "jindra",
+                  dbname = "dbase",
+                  password = rstudioapi::askForPassword("Database password"))
+
+maxDatum <- dbSendQuery(myDb, "select max(datum) from benzin") %>%
+  dbFetch()
+
+frmBenzinKey <- tbl(myDb, "benzin") %>%
+  as_data_frame() %>%
+  filter(datum == maxDatum$max)
+
+
+# příprava shapefilu ----
 
 bbox <- extent(republika) # trochu víc místa nahoře a dole, aby se vešel nadpis & legenda
 bbox@ymax <- bbox@ymax + 0.35
 bbox@ymin <- bbox@ymin - 0.15
 
-# Škrábej ty prkna ať jsou bílý... ----
-
-for (i in 1:56) { # for cyklus k načtení všech stran
-
-    impuls <- read_html(paste(url, i, sep = ''), encoding = "windows-1250")
-    asdf <- impuls %>%
-      html_table()
-    
-    frmBenzin <- rbind(frmBenzin, asdf[[1]])
-}
-
-# Vyčištění dat ----
-
-frmBenzin$X1 <- NULL
-colnames(frmBenzin) <- c("nazev", "obec", "okres","smes", "datum", "cena")
-frmBenzin$cena <- gsub("(*UCP)\\s*Kč", "", frmBenzin$cena, perl = T)
-frmBenzin$cena <- as.double(frmBenzin$cena)
-frmBenzin$datum <- as.Date(frmBenzin$datum, "%d. %m. %Y")
-frmBenzin$okres <- gsub("Hlavní město\\s","",frmBenzin$okres)
-frmBenzin$obec <- str_split(frmBenzin$obec, ",", simplify = T)[,1]
-frmBenzin$key <- paste(frmBenzin$obec, frmBenzin$okres, sep = "/")
-
-# průměr za obci místo detailu ----
-
-frmBenzinKey <- frmBenzin %>%
-  dplyr::select(key, cena, smes) %>% # raster mi maskuje select (hajzl!)
-  filter(smes == "natural95") %>%
-  group_by(key) %>%
-  summarise(cena = mean(cena))
-
-# příprava shapefilu
 
 obce_body$key <- paste(obce_body$Obec, obce_body$Okres, sep = "/")
 
