@@ -1,13 +1,12 @@
 # Inicializace ----
-library(rvest)
 library(tmap)
 library(tmaptools)
 library(raster)
 library(RCzechia) # set shapefilů pro Českou republiku - devtools::install_github("jlacko/RCzechia")
-library(stringr)
 library(dplyr)
 library(RColorBrewer)
-#library(extrafont)
+library(dbplyr)
+library(RPostgreSQL)
 
 # Připojení databáze ----
 
@@ -18,10 +17,10 @@ myDb <- dbConnect(dbDriver('PostgreSQL'),
                   dbname = "dbase",
                   password = rstudioapi::askForPassword("Database password"))
 
-maxDatum <- dbSendQuery(myDb, "select max(datum) from benzin") %>%
+maxDatum <- dbSendQuery(myDb, "select max(datum) from benzin") %>% # datum posledního uložení
   dbFetch()
 
-frmBenzinKey <- tbl(myDb, "benzin") %>%
+frmBenzinKey <- tbl(myDb, "benzin") %>% # data frame posledního záznamu
   as_data_frame() %>%
   filter(datum == maxDatum$max)
 
@@ -48,7 +47,7 @@ wrkObce <- obce_polygony[obce_polygony$Obec %in% vObce, ]
 
 nadpis <- "Cena benzínu po obcích v České republice" # nadpis grafu
 leyenda <- "Cena Naturalu 95"  # nadpis legendy
-endCredits <- paste("zdroj dat: Ráádio Impuls (http://benzin.impuls.cz), staženo k", format(max(frmBenzin$datum), "%d.%m.%Y") ,sep = " ")
+endCredits <- paste("zdroj dat: Ráádio Impuls (http://benzin.impuls.cz), staženo k", format(maxDatum$max, "%d.%m.%Y") ,sep = " ")
 
 tmBenzin <-   tm_shape(obce_body, bbox = bbox) + tm_bubbles(size = 1/40, col = "cena", alpha = 0.85, border.alpha = 0, showNA = F, pal = "YlOrRd", title.col = leyenda) +
   tm_shape(republika, bbox = bbox) + tm_borders("grey30", lwd = 1) +
