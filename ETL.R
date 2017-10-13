@@ -16,8 +16,8 @@ myDb <- dbConnect(dbDriver('PostgreSQL'),
                   dbname = "dbase",
                   password = rstudioapi::askForPassword("Database password"))
  
-maxDatum <- dbSendQuery(myDb, "select max(datum) from benzin") %>%
-  dbFetch()
+maxDatum <- dbSendQuery(myDb, "select max(datum) from benzin") %>% #poslat na databázi
+  dbFetch() #stahnout výsedky lokálně
 
 # Škrábej ty prkna ať jsou bílý... ----
 
